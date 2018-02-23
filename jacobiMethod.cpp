@@ -7,11 +7,14 @@
 #include <iomanip>
 #include <cstdlib>
 
+#include "jacobiMethod.h"
+
+
 using namespace std;
 using namespace arma;
-ofstream ofile;
 
-mat makeTridiagmat(int n, mat A){
+mat makeTridiagmat(int n){
+  mat A = zeros<mat>(n,n);
   double h = 1.0/ (double) n;
   double hh = h*h;
   A(0,0) = 2.0/hh; A(0,1) = -1.0/hh;
@@ -39,7 +42,7 @@ double maxoffdiag(mat A, int n, int* k, int* l){
   return max;
 }
 
-int rotate(mat &A, mat R, int n, int k, int l){
+int rotate(mat &A, int n, int k, int l){
   double s, c;
   if(A(k,l) != 0){
     double t, tau;
@@ -85,12 +88,7 @@ vec getEigenvalues(mat A, int n){
   return Eigenvalues;
 }
 
-
-
-
-int main(int argc, char* argv[]){
-  // char* name = argv[1];
-  int n = atoi(argv[1]);
+int jacobi(int n, mat &A){
   double h = 1/ (double) n;
   double hh = h*h;
   double max;
@@ -98,11 +96,7 @@ int main(int argc, char* argv[]){
   double maxiterations = 10000; //(double)n*(double)n*(double)n;
 
 
-  mat A = zeros<mat>(n,n);
-  mat Acopy = zeros<mat>(n,n);
-  A = makeTridiagmat(n, A);
-  Acopy = makeTridiagmat(n,Acopy);
-  mat R = eye<mat>(n,n);
+  // mat R = eye<mat>(n,n);
 
   int k;
   int l;
@@ -113,17 +107,17 @@ int main(int argc, char* argv[]){
   int iterations = 0;
   while(fabs(max) > eps && (double) iterations < maxiterations){
     max = maxoffdiag(A,n,&k,&l);
-    cout << max << endl;
-    rotate(A,R,n,k,l);
+    rotate(A,n,k,l);
     iterations++;
   }
-  A.print("A: ");
-
-  vec B;
-  B = getEigenvalues(A, n);
-  B.print();
-
-  vec eigval;
-  eig_sym(eigval, Acopy);
-  eigval.print("eigval: ");
+  return 0;
+  // A.print("A: ");
+  //
+  // vec B;
+  // B = getEigenvalues(A, n);
+  // B.print();
+  //
+  // vec eigval;
+  // eig_sym(eigval, Acopy);
+  // eigval.print("eigval: ");
 }
