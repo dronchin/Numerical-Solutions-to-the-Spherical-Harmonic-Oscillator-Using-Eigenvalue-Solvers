@@ -17,5 +17,6 @@ double maxoffdiag(mat,int,int*,int*);
 int rotate(mat&,int,int,int);
 vec getEigenvalues(mat,int);
 int jacobi(int,mat&);
+double frobeniusNorm(mat, int);
 
 #endif /* JACOBIMETHOD_H */
