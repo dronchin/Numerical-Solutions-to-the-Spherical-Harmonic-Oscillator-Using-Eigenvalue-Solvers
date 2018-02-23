@@ -1,11 +1,4 @@
 //g++ -o LUdecompsolver.x  LUdecompsolver.cpp -larmadillo -llapack -lblas
-#include <iostream>
-#include <armadillo>
-#include <cmath>
-// #include <ctime>
-#include <fstream>
-#include <iomanip>
-#include <cstdlib>
 
 #include "jacobiMethod.h"
 
@@ -93,10 +86,7 @@ int jacobi(int n, mat &A){
   double hh = h*h;
   double max;
   double eps = 1e-8;
-  double maxiterations = 10000; //(double)n*(double)n*(double)n;
-
-
-  // mat R = eye<mat>(n,n);
+  double maxiterations = (double)n*(double)n*(double)n;
 
   int k;
   int l;
@@ -111,13 +101,13 @@ int jacobi(int n, mat &A){
     iterations++;
   }
   return 0;
-  // A.print("A: ");
-  //
-  // vec B;
-  // B = getEigenvalues(A, n);
-  // B.print();
-  //
-  // vec eigval;
-  // eig_sym(eigval, Acopy);
-  // eigval.print("eigval: ");
+}
+double frobeniusNorm(mat A, int n){
+  double frobn = 0;
+  for(int i=0; i<n; i++){
+    for(int j=0; j<n; j++){
+      frobn += A(i,j)*A(i,j);
+    }
+  }
+  return frobn;
 }
