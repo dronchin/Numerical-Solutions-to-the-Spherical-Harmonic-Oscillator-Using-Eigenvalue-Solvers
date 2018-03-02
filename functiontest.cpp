@@ -13,7 +13,7 @@ TEST_CASE("Testing max A(i,j)"){
     y = rand() % n;
   }
   float val = 1000000.0;
-  A = makeTridiagmat(n);
+  A = makeTridiagmat(n,1,false);
   A(x,y) = val;
   A(y,x) = val;
 
@@ -28,9 +28,11 @@ TEST_CASE("Testing eigen values"){
   int n = 5;
   mat A = zeros<mat>(n,n);
   mat Acopy = zeros<mat>(n,n);
-  A = makeTridiagmat(n);
-  Acopy = makeTridiagmat(n);
-  jacobi(n,A);
+  mat v = eye<mat>(n,n);
+  A = makeTridiagmat(n,1,false);
+  Acopy = makeTridiagmat(n,1,false);
+  double timer;
+  timer = jacobi(n,A,v);
 
   vec B;
   B = getEigenvalues(Acopy, n);
@@ -50,7 +52,8 @@ TEST_CASE("Testing eigen values"){
 TEST_CASE("Rotate preserves frobenius norm"){
   int n = 5;
   mat A = zeros<mat>(n,n);
-  A = makeTridiagmat(n);
+  mat v = eye<mat>(n,n);
+  A = makeTridiagmat(n,1,false);
   double norm1;
   norm1 = frobeniusNorm(A,n);
 
@@ -60,9 +63,23 @@ TEST_CASE("Rotate preserves frobenius norm"){
     y = rand() % n;
   }
 
-  rotate(A, n, x, y);
+  rotate(A, v, n, x, y);
   double norm2;
   norm2 = frobeniusNorm(A,n);
 
   REQUIRE(norm1 == norm2);
+}
+TEST_CASE("Eignvector orthoganality"){
+  int n = 4;
+  mat A = zeros<mat>(n,n);
+  mat v = eye<mat>(n,n);
+  A = makeTridiagmat(n,1,false);
+
+  jacobi(n, A, v);
+  REQUIRE(dot(v.col(0),v.col(1)) == Approx(0));
+  REQUIRE(dot(v.col(1),v.col(2)) == Approx(0));
+  REQUIRE(dot(v.col(2),v.col(3)) == Approx(0));
+  REQUIRE(dot(v.col(3),v.col(0)) == Approx(0));
+
+  // REQUIRE(dot(v(0),v(1)) == 0);
 }
