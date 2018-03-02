@@ -1,21 +1,37 @@
-//g++ -o LUdecompsolver.x  LUdecompsolver.cpp -larmadillo -llapack -lblas
-
 #include "jacobiMethod.h"
 
 
 using namespace std;
 using namespace arma;
 
-mat makeTridiagmat(int n){
+mat makeTridiagmat(int n, double wr, bool interact){
   mat A = zeros<mat>(n,n);
   double h = 1.0/ (double) n;
   double hh = h*h;
-  A(0,0) = 2.0/hh; A(0,1) = -1.0/hh;
-  A(n-1,n-1) = 2.0/hh; A(n-1,n-2) = -1.0/hh;
+  vec r = zeros<vec>(n);
+  r(0) = h;
+  for(int i=1; i<n; i++){
+    r(i) = r(i-1)+h;
+  }
+  r.print();
+  // beginning and end of of matrix
+  if(interact){
+    A(0,0) = 2.0/hh + wr*wr*r(0)*r(0) + 1/r(0); A(0,1) = -1.0/hh;
+    A(n-1,n-1) = 2.0/hh + wr*wr*r(n-1)*r(n-1) + 1/r(n-1); A(n-1,n-2) = -1.0/hh;
+  }else{
+    A(0,0) = 2.0/hh + r(0)*r(0); A(0,1) = -1.0/hh;
+    A(n-1,n-1) = 2.0/hh + r(n-1)*r(n-1); A(n-1,n-2) = -1.0/hh;
+  }
+  // rest of matrix
   for(int i = 1; i < n-1; i++){
-    A(i,i) = 2.0/hh;
-    A(i,i-1) = -1.0/hh;
-    A(i,i+1) = -1.0/hh;
+    if(interact){
+      A(i,i) = 2.0/hh + wr*wr*r(i)*r(i) + 1/r(i);
+      A(i,i-1) = -1.0/hh; A(i,i+1) = -1.0/hh;
+    }else{
+      A(i,i) = 2.0/hh;
+      A(i,i-1) = -1.0/hh; A(i,i+1) = -1.0/hh;
+    }
+
   }
   return A;
 }
@@ -35,7 +51,7 @@ double maxoffdiag(mat A, int n, int* k, int* l){
   return max;
 }
 
-int rotate(mat &A, int n, int k, int l){
+int rotate(mat &A, mat &v, int n, int k, int l){
   double s, c;
   if(A(k,l) != 0){
     double t, tau;
@@ -53,7 +69,7 @@ int rotate(mat &A, int n, int k, int l){
     s = 0;
     c = 1;
   }
-  double a_kk, a_ll, a_ik, a_il;
+  double a_kk, a_ll, a_ik, a_il, v_ik, v_il;
   a_kk = A(k,k);
   a_ll = A(l,l);
   A(k,k) = a_kk*c*c + a_ll*s*s - 2.0*c*s*A(k,l);
@@ -69,6 +85,10 @@ int rotate(mat &A, int n, int k, int l){
       A(i,l) = c*a_il + s*a_ik;
       A(l,i) = A(i,l);
     }
+    v_ik = v(i,k);
+    v_il = v(i,l);
+    v(i,k) = c*v_ik - s*v_il;
+    v(i,l) = c*v_il + s*v_ik;
   }
   return 0;
 }
@@ -81,27 +101,30 @@ vec getEigenvalues(mat A, int n){
   return Eigenvalues;
 }
 
-int jacobi(int n, mat &A){
+double jacobi(int n, mat &A, mat& v){
   double h = 1/ (double) n;
   double hh = h*h;
   double max;
   double eps = 1e-8;
   double maxiterations = (double)n*(double)n*(double)n;
-
+  clock_t start, end;
   int k;
   int l;
   k = 0;
   l = 0;
 
+  start = clock();
   max = maxoffdiag(A,n,&k,&l);
   int iterations = 0;
   while(fabs(max) > eps && (double) iterations < maxiterations){
     max = maxoffdiag(A,n,&k,&l);
-    rotate(A,n,k,l);
+    rotate(A,v,n,k,l);
     iterations++;
   }
-  return 0;
+  end = clock();
+  return (double)end - (double)start;
 }
+
 double frobeniusNorm(mat A, int n){
   double frobn = 0;
   for(int i=0; i<n; i++){
