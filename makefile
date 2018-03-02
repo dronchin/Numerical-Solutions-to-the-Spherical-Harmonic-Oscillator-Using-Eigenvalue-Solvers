@@ -13,8 +13,8 @@ all: ${PROG1} ${PROG2}
 clean:
 			rm -f *.o
 
-${PROG1} :	jacobiMethod.h jacobiMethod_wip.cpp main.cpp
+${PROG1} :	jacobiMethod.h jacobiMethod.cpp main.cpp
 			${CPPflags} $^ -o ${PROG1} ${LIB}
 
-${PROG2} : functiontest.cpp jacobiMethod_wip.cpp jacobiMethod.h
+${PROG2} : functiontest.cpp jacobiMethod.cpp jacobiMethod.h
 			${CPPflags} $^ -o ${PROG2} ${LIB}
