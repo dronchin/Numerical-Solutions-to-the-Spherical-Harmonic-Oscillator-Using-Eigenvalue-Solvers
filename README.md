@@ -1,6 +1,11 @@
 # Project2
 PHY 480 with professor Morten Hjorth
 
+## Project Description
+Taken from Project2.pdf at https://github.com/CompPhysics/ComputationalPhysicsMSU/blob/master/doc/Projects/2018/Project2/pdf/Project2.pdf
+We will start with the two-point boundary value problem of a buckling beam or a spring fastened at both ends. This is one of the problems which has analytical solutions. Thereafter, by simply adding a new variable along the diagonal elements, we can study quantum mechanical problems. In particular, we will study the harmonic oscillator problem in three dimensions, with one or two electrons. For the latter case we can study the role of the repulsive Coulomb interaction and extract interesting physics results. For selected frequencies, even this interacting two-electron problem exhibits analytical solutions
+
+## Program Details
 Program source files can be found in the program source folder. This includes catch.hpp, EigenvalueArma.cpp, functiontest.cpp, jacobiMethod.cpp, jacobiMethod.h, justjacobi.cpp, main.cpp, mainMyjacobi.cpp, plottingDifEnergy.py, plottinginteraction.py
 
 Use the function “make” in the Source files folder in order to build the three programs.
