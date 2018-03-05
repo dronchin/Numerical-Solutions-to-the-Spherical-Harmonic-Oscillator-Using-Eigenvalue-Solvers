@@ -20,9 +20,8 @@ TEST_CASE("Testing maxoffdiag of A(i,j)"){
 
   int k = 0; int l = 0;
   maxoffdiag(A, n, &k, &l);
-
-  REQUIRE(k==x);
-  REQUIRE(l==y);
+  REQUIRE(l==x);
+  REQUIRE(k==y);
   REQUIRE(A(k,l)==Approx(val));
 }
 TEST_CASE("Testing eigenvalues from jacobi"){
