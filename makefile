@@ -6,9 +6,9 @@ LIB = -larmadillo -llapack -lblas
 # Here we define the name of the executable
 PROG1 = main.x
 PROG2 = functiontest.x
+PROG3 = mevsArma.x
 
-
-all: ${PROG1} ${PROG2}
+all: ${PROG1} ${PROG2} ${PROG3}
 
 clean:
 			rm -f *.o
@@ -18,3 +18,6 @@ ${PROG1} :	jacobiMethod.h jacobiMethod.cpp main.cpp
 
 ${PROG2} : functiontest.cpp jacobiMethod.cpp jacobiMethod.h
 			${CPPflags} $^ -o ${PROG2} ${LIB}
+
+${PROG3} :	jacobiMethod.h jacobiMethod.cpp mainMyjacobi.cpp
+			${CPPflags} $^ -o ${PROG3} ${LIB}
